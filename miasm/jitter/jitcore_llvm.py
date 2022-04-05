@@ -4,6 +4,7 @@ import glob
 import importlib
 import tempfile
 import sysconfig
+import uuid
 
 from miasm.jitter.llvmconvert import *
 import miasm.jitter.jitcore as jitcore
@@ -44,9 +45,11 @@ class JitCore_LLVM(jitcore.JitCore):
         self.lifter = lifter
 
         # Cache temporary dir
-        self.tempdir = os.path.join(tempfile.gettempdir(), "miasm_cache")
+        self.tempdir = os.path.join(
+            tempfile.gettempdir(), "miasm_cache", uuid.uuid4().hex)
+
         try:
-            os.mkdir(self.tempdir, 0o755)
+            os.makedirs(self.tempdir, 0o755, exist_ok=True)
         except OSError:
             pass
         if not os.access(self.tempdir, os.R_OK | os.W_OK):
